@@ -1,0 +1,5 @@
+user_id = "sebas.xtreme"
+client_id = "f0be59153ce943a68c60ebf9723f434b"
+client_secret = "6d9755e6b61649ffb15e316a7f927dc2"
+base64_encoded = "ZjBiZTU5MTUzY2U5NDNhNjhjNjBlYmY5NzIzZjQzNGI6NmQ5NzU1ZTZiNjE2NDlmZmIxNWUzMTZhN2Y5MjdkYzI="
+spotify_token = "BQDeUYJd7ikR8hHDlL8dXx0ozmqNNsD7wBwuZbSDYaJVnvbriXIPFQERRJQdujLFVLhlZ9ZenOaKL8svf4zWUoqe3jq7Ol6a_ruTPV-fK5ZnHmZTRi6XS0xMo5Fx9qTkd-LLH1Dklt3LEHCjlQH3paND-BJLgeIk8qxu8A1v2dHTtKSd9vDQ90G3YBI_eWAnECoTjHlRQQOibtqWKg"
