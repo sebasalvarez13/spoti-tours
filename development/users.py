@@ -50,7 +50,8 @@ class User():
             #Execute query
             result = connection.execute(query, [self.first_name, self.last_name, self.email, self.username, self.password])
 
-
+'''
 if __name__ == "__main__":
     user = User('Sebas', 'Alvarez', 'sebas@pena.com', 'sebas.xtreme', '1234')
     user.register_user()
+'''
