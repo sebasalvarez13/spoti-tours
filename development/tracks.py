@@ -64,7 +64,9 @@ class Tracks():
 
     def upload_tracks(self):
         '''Uploads the track data to database'''
-        df = self.filter_track_data() 
+        df = self.filter_track_data()
+        #Insert 'id' column at beggining of df before uploading to database
+        df.insert(loc = 0, column = 'id', value = range(1, len(df)+1)) 
 
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
         engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
