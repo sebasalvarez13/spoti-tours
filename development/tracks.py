@@ -72,13 +72,6 @@ class Tracks():
         #Create sql connection
         connection = engine.connect()
 
-        query = '''SELECT count(*) FROM tracks;'''
-        #Execute query
-        result = connection.execute(query)
-
-        #Fetch count value
-        track_count = result.fetchall()[0][0]
-
         df.to_sql(con = connection, name = 'tracks', if_exists = 'replace', index = False)
 
 
