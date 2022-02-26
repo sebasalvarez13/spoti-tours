@@ -49,7 +49,7 @@ class Tracks():
 
         #Create a dictionary and add the lists (values) to their respective key
         track_dict = {
-            'songs': songs_list,
+            'song': songs_list,
             'artist': artist_list,
             'album': album_list,
             'played_at': played_at_list,
@@ -60,8 +60,30 @@ class Tracks():
         df = pandas.DataFrame(track_dict, columns = track_dict.keys())
 
         return(df)
-            
+
+
+    def upload_tracks(self):
+        '''Uploads the track data to database'''
+        df = self.filter_track_data() 
+
+        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
+        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
+
+        #Create sql connection
+        connection = engine.connect()
+
+        query = '''SELECT count(*) FROM tracks;'''
+        #Execute query
+        result = connection.execute(query)
+
+        #Fetch count value
+        track_count = result.fetchall()[0][0]
+
+        df.to_sql(con = connection, name = 'tracks', if_exists = 'replace', index = False)
+
+
 if __name__ == '__main__':
     spotify_token = ''
     tracks = Tracks(spotify_token)
-    print(tracks.filter_track_data())
+    #print(tracks.filter_track_data())
+    tracks.upload_tracks()
