@@ -3,6 +3,8 @@ import requests
 import sqlalchemy
 import pymysql
 
+from secrets import spotify_token
+
 
 class Tracks():
     def __init__(self, spotify_token):
@@ -61,24 +63,47 @@ class Tracks():
 
         return(df)
 
+    def tracks_count(self):
+        '''Retunrs the number of records in the tracks table'''
+        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
+        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
+    
+        query = '''SELECT count(*) FROM tracks;'''
+
+        #Create sql connection
+        connection = engine.connect()
+        #Execute query
+        result = connection.execute(query)
+
+        #Fetch count value
+        track_count = result.fetchall()[0][0]
+
+        return(track_count)
+
 
     def upload_tracks(self):
-        '''Uploads the track data to database'''
+        '''Uploads the track data to database. Ignores "played_at" field. Only appends new tracks to DB'''
         df = self.filter_track_data()
-        #Insert 'id' column at beggining of df before uploading to database
+        #Drops "played_at" column
+        df = df.drop(['played_at'], axis = 1)
+
+        #Deletes repeated tracks from filtered df
+        df = df.drop_duplicates(subset= 'song_uri', keep= 'first')
+
+        #Insert 'id' column at beggining of df before uploading to database. Only if tracks table is empty
         df.insert(loc = 0, column = 'id', value = range(1, len(df)+1)) 
 
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
         engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-
-        #Create sql connection
+        #Create sql connection 
         connection = engine.connect()
 
-        df.to_sql(con = connection, name = 'tracks', if_exists = 'replace', index = False)
+
+        df.to_sql(con = connection, name = 'tracks', if_exists = 'append', index = False)
 
 
 if __name__ == '__main__':
-    spotify_token = ''
     tracks = Tracks(spotify_token)
     #print(tracks.filter_track_data())
-    tracks.upload_tracks()
+    #tracks.upload_tracks()
+    print(tracks.tracks_count())
