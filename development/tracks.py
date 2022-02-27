@@ -1,3 +1,5 @@
+from sqlite3 import dbapi2
+from numpy import record
 import pandas
 import requests
 import sqlalchemy
@@ -90,7 +92,7 @@ class Tracks():
         #Deletes repeated tracks from filtered df
         df = df.drop_duplicates(subset= 'song_uri', keep= 'first')
 
-        #Insert 'id' column at beggining of df before uploading to database. Only if tracks table is empty
+        #Insert 'id' column at beggining of df before uploading to database. 
         last_id = self.tracks_count()
         df.insert(loc = 0, column = 'id', value = range((last_id+1), (last_id+len(df)+1))) 
 
@@ -99,12 +101,37 @@ class Tracks():
         #Create sql connection 
         connection = engine.connect()
 
+        #Insert query
+        query = """INSERT INTO tracks (song, artist, album, song_uri)
+                VALUES (%s, %s, %s, %s)"""
 
-        df.to_sql(con = connection, name = 'tracks', if_exists = 'append', index = False)
+        for index, row in df.iterrows():
+            song_uri = row['song_uri']
+            
+            if self.record_exists(song_uri) == False:
+                connection.execute(query, [row['song'], row['artist'], row['album'], song_uri])
 
+
+    def record_exists(self, song_uri):
+        '''Retunrs true if song already exists in DB. Uses song_uri data to verify existence'''
+        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
+        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
+        #Create sql connection 
+        connection = engine.connect()
+
+        query = """SELECT count(*) FROM tracks WHERE song_uri = %s"""
+        
+        result = connection.execute(query, [song_uri])
+
+        record_occurence = result.fetchall()[0][0]
+
+        if record_occurence == 0:
+            return False
+        else:
+            return True
+        
 
 if __name__ == '__main__':
     tracks = Tracks(spotify_token)
     #print(tracks.filter_track_data())
     tracks.upload_tracks()
-    print(tracks.tracks_count())
