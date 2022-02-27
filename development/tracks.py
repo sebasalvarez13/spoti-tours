@@ -91,7 +91,8 @@ class Tracks():
         df = df.drop_duplicates(subset= 'song_uri', keep= 'first')
 
         #Insert 'id' column at beggining of df before uploading to database. Only if tracks table is empty
-        df.insert(loc = 0, column = 'id', value = range(1, len(df)+1)) 
+        last_id = self.tracks_count()
+        df.insert(loc = 0, column = 'id', value = range((last_id+1), (last_id+len(df)+1))) 
 
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
         engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
@@ -105,5 +106,5 @@ class Tracks():
 if __name__ == '__main__':
     tracks = Tracks(spotify_token)
     #print(tracks.filter_track_data())
-    #tracks.upload_tracks()
+    tracks.upload_tracks()
     print(tracks.tracks_count())
