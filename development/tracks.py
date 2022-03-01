@@ -1,5 +1,4 @@
 from sqlite3 import dbapi2
-from numpy import record
 import pandas
 import requests
 import sqlalchemy
@@ -11,6 +10,7 @@ from secrets import spotify_token
 class Tracks():
     def __init__(self, spotify_token):
         self.spotify_token = spotify_token
+        self.df_tracks = self.filter_track_data()
 
     def get_tracks(self):
         '''Connects to Spotify API and obtains the recently played songs. Returns the parsed data'''
@@ -65,6 +65,7 @@ class Tracks():
 
         return(df)
 
+
     def tracks_count(self):
         '''Retunrs the number of records in the tracks table'''
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
@@ -83,9 +84,28 @@ class Tracks():
         return(track_count)
 
 
+    def record_exists(self, song_uri):
+        '''Retunrs true if song already exists in DB. Uses song_uri data to verify existence'''
+        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
+        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
+        #Create sql connection 
+        connection = engine.connect()
+
+        query = """SELECT count(*) FROM tracks WHERE song_uri = %s"""
+        
+        result = connection.execute(query, [song_uri])
+
+        record_occurence = result.fetchall()[0][0]
+
+        if record_occurence == 0:
+            return False
+        else:
+            return True
+
+
     def upload_tracks(self):
         '''Uploads the track data to database. Ignores "played_at" field. Only appends new tracks to DB'''
-        df = self.filter_track_data()
+        df = self.df_tracks
         #Drops "played_at" column
         df = df.drop(['played_at'], axis = 1)
 
@@ -112,26 +132,7 @@ class Tracks():
                 connection.execute(query, [row['song'], row['artist'], row['album'], song_uri])
 
 
-    def record_exists(self, song_uri):
-        '''Retunrs true if song already exists in DB. Uses song_uri data to verify existence'''
-        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-        #Create sql connection 
-        connection = engine.connect()
-
-        query = """SELECT count(*) FROM tracks WHERE song_uri = %s"""
-        
-        result = connection.execute(query, [song_uri])
-
-        record_occurence = result.fetchall()[0][0]
-
-        if record_occurence == 0:
-            return False
-        else:
-            return True
-        
-
 if __name__ == '__main__':
     tracks = Tracks(spotify_token)
     #print(tracks.filter_track_data())
-    tracks.upload_tracks()
+    tracks.upload_reproductions(username = 'picoletosa')
