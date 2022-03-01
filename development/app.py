@@ -79,6 +79,10 @@ def dashboard(user, access_token):
         tracks = Tracks(access_token)
         #Return a dataframe with song, artist, album, played_at, song_uri
         recent_songs = tracks.filter_track_data()
+
+        #Upload songs to database
+        tracks.upload_tracks()
+        
         #Drop song_uri column before displaying in html page
         recent_songs = recent_songs.drop(['song_uri'], axis = 1)
         #Convert df to html
