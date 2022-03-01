@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from users import User
 from tracks import Tracks
 from authorization import *
+from reproductions import *
+
 
 app = Flask(__name__)
 app.secret_key = 'secretkey'
@@ -80,8 +82,12 @@ def dashboard(user, access_token):
         #Return a dataframe with song, artist, album, played_at, song_uri
         recent_songs = tracks.filter_track_data()
 
-        #Upload songs to database
+        #Upload tracks to database
         tracks.upload_tracks()
+
+        #Upload reproductions to database
+        format_reprod = format_time(recent_songs)
+        upload_reproductions(user, format_reprod)
         
         #Drop song_uri column before displaying in html page
         recent_songs = recent_songs.drop(['song_uri'], axis = 1)
