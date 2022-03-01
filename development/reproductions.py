@@ -9,7 +9,7 @@ from secrets import spotify_token
 from tracks import Tracks
 
 
-def upload_reproductions(df_tracks, username):
+def upload_reproductions(username, df_tracks):
     '''Uploads the song_id, users_id and played_at'''
     #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
     engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
@@ -92,4 +92,4 @@ if __name__ == '__main__':
     #print(df_tracks)
     username = 'picoletosa'
     new_df_tracks = format_time(df_tracks)
-    upload_reproductions(new_df_tracks, username)
+    upload_reproductions(username, new_df_tracks)
