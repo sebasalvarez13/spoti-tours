@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from users import User
 from tracks import Tracks
 from authorization import *
 
 app = Flask(__name__)
+app.secret_key = 'secretkey'
 
 @app.route('/')
 def home():
@@ -36,10 +37,16 @@ def login():
         #Define boolean login to verify username and password
         login = user.login_user(username, password)
 
-        #If username and password match, redirect user Spotify Authorization page
+        #If username and password match, create a session and redirect user Spotify Authorization page
         if  login is True:
+            #Set up session data. Session stores data as a dictionary
+            session['username'] = username
+            session['password'] = password
+
+            #Get authorization code from Spotify server
             response = get_authorization()
             url = response.url
+
             return redirect(url)
         else:
             #If username or password is incorrect, redirect to login page and display "Username/password incorrect"
@@ -53,11 +60,17 @@ def callback():
     if request.method == 'GET':
         #Obtain the authorization code from the URL
         code = request.args.get("code")
+        #Pass code to Spotify server to obtain access_token
         token_response = get_token(code)
         access_token = token_response['access_token']
 
-    else:
-        return ('we are in the POST of /callback')
+        #Verify that user is logged in session
+        if 'username' in session:
+            username = session['username']
+            return redirect(url_for('dashboard'))
+        else:
+            return redirect(url_for('login'))
+
 
     #return 'callback page'
 
