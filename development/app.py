@@ -67,12 +67,16 @@ def callback():
         #Verify that user is logged in session
         if 'username' in session:
             username = session['username']
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('dashboard', token = access_token, user = username))
         else:
             return redirect(url_for('login'))
 
 
-    #return 'callback page'
+@app.route('/dashboard', methods = ['GET', 'POST'])
+def dashboard(token, user):
+    if request.method == 'GET':
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8888, debug=True)
