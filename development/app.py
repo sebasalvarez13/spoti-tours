@@ -67,16 +67,25 @@ def callback():
         #Verify that user is logged in session
         if 'username' in session:
             username = session['username']
-            return redirect(url_for('dashboard', token = access_token, user = username))
+            return redirect(url_for('dashboard', user = username, access_token = access_token))
         else:
             return redirect(url_for('login'))
 
 
-@app.route('/dashboard', methods = ['GET', 'POST'])
-def dashboard(token, user):
+@app.route('/dashboard/<user>/<access_token>', methods = ['GET', 'POST'])
+def dashboard(user, access_token):
     if request.method == 'GET':
+        #Get 50 recently played songs for user
+        tracks = Tracks(access_token)
+        #Return a dataframe with song, artist, album, played_at, song_uri
+        recent_songs = tracks.filter_track_data()
+        #Drop song_uri column before displaying in html page
+        recent_songs = recent_songs.drop(['song_uri'], axis = 1)
+        #Convert df to html
+        recent_songs_html = recent_songs.to_html()
+
+        return(recent_songs_html)
 
 
-
-if __name__ == '__main__':
+if __name__ == '__main__': 
     app.run(host='0.0.0.0', port=8888, debug=True)
