@@ -63,8 +63,11 @@ def format_time(df_tracks):
         #Convert time string to datetime object
         spotify_time_obj = datetime.datetime.strptime(time_fltrd.group(), '%Y-%m-%dT%H:%M:%S') 
 
+        #Convert datetime object in UTC to local time
+        local_time_obj = spotify_time_obj.replace(tzinfo=timezone.utc).astimezone(tz=None)
+
         #Convert time object to string in correct sql datetime format
-        sql_time_str = spotify_time_obj.strftime('%Y-%m-%d %H:%M:%S')
+        sql_time_str = local_time_obj.strftime('%Y-%m-%d %H:%M:%S')
         #Append fixed times to list
         fixed_times.append(sql_time_str)
 
@@ -72,19 +75,9 @@ def format_time(df_tracks):
     df_tracks = df_tracks.drop(['played_at'], axis = 1)
     df_tracks['played_at'] = fixed_times
 
+
     return df_tracks
 
-    print(fixed_times)
-
-    '''
-    #Convert datetime object in UTC to local time
-    #local_time_obj = spotify_time_obj.replace(tzinfo=timezone.utc).astimezone(tz=None)
-
-    
-    #Strip datetime object in local time into string
-    time = local_time_obj.strftime("%H:%M:%S")
-    date = local_time_obj.strftime("%m-%d-%Y")
-    '''
 
 if __name__ == '__main__':
     tracks = Tracks(spotify_token)
@@ -92,4 +85,5 @@ if __name__ == '__main__':
     #print(df_tracks)
     username = 'picoletosa'
     new_df_tracks = format_time(df_tracks)
-    upload_reproductions(username, new_df_tracks)
+    print(new_df_tracks['played_at'])
+    #upload_reproductions(username, new_df_tracks)
