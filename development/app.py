@@ -64,21 +64,22 @@ def callback():
         code = request.args.get("code")
         #Pass code to Spotify server to obtain access_token
         token_response = get_token(code)
-        access_token = token_response['access_token']
+        #access_token = token_response['access_token']
+        session['access_token'] = token_response['access_token']
 
         #Verify that user is logged in session
         if 'username' in session:
             username = session['username']
-            return redirect(url_for('dashboard', user = username, access_token = access_token))
+            return redirect(url_for('dashboard', user = username))
         else:
             return redirect(url_for('login'))
 
 
-@app.route('/dashboard/<user>/<access_token>', methods = ['GET', 'POST'])
-def dashboard(user, access_token):
+@app.route('/dashboard/<user>', methods = ['GET', 'POST'])
+def dashboard(user):
     if request.method == 'GET':
         #Get 50 recently played songs for user
-        tracks = Tracks(access_token)
+        tracks = Tracks(session['access_token'])
         #Return a dataframe with song, artist, album, played_at, song_uri
         recent_songs = tracks.filter_track_data()
 
@@ -93,6 +94,7 @@ def dashboard(user, access_token):
         recent_songs = recent_songs.drop(['song_uri'], axis = 1)
         #Convert df to html
         recent_songs_html = recent_songs.to_html()
+
 
         return(recent_songs_html)
 
