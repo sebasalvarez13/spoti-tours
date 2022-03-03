@@ -1,3 +1,4 @@
+from sqlalchemy import table
 from flask import Flask, render_template, request, redirect, url_for, session
 from users import User
 from tracks import Tracks
@@ -91,12 +92,12 @@ def dashboard(user):
         upload_reproductions(user, format_reprod)
         
         #Drop song_uri column before displaying in html page
-        recent_songs = recent_songs.drop(['song_uri'], axis = 1)
+        recent_songs = format_reprod.drop(['song_uri'], axis = 1)
         #Convert df to html
-        recent_songs_html = recent_songs.to_html()
+        recent_songs_html = recent_songs.to_html(justify = 'left')
 
-
-        return(recent_songs_html)
+        #return(recent_songs_html)
+        return render_template('dashboard.html', table = recent_songs_html)
 
 
 if __name__ == '__main__': 
