@@ -1,0 +1,15 @@
+<!-- base template/theme of the website. Mostly just after users is logged in -->
+
+<!DOCTYPE html>
+    <html>
+        <head>
+            <!-- With this block we will alow the child template to give us some content we'll fill in -->
+            <title>{% block title %}{% endblock %}</title>
+        </head>
+        <body>
+            <h1>Welcome Picoletosa</h1>
+            {% block content %}
+            <!-- Insert any code for content-->
+            {% endblock %}
+        </body>
+    </html>
