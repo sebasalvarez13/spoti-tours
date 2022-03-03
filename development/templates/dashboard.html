@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
-<!-- Give content to the block title-->
+<!-- Give content to the block title -->
 {% block title %}Spotitours{% endblock %}
 
 {% block content %}
-<h1>Test content df to html</h1>
+<!-- Table of recently played songs -->
+{{ table|safe }}
+
 {% endblock %}
