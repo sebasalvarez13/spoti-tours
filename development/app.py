@@ -105,7 +105,7 @@ def dashboard(user):
 def topartists():
     if request.method == 'GET':
         artist = Artist()
-        top_artists = artist.most_played_artists()
+        top_artists = artist.top_artists(session['username'])
 
         #Convert df to html
         top_artists_html = top_artists.to_html(justify = 'left')
