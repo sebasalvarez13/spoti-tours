@@ -2,6 +2,7 @@ from sqlalchemy import table
 from flask import Flask, render_template, request, redirect, url_for, session
 from users import User
 from tracks import Tracks
+from artists import Artist
 from authorization import *
 from reproductions import *
 
@@ -98,6 +99,19 @@ def dashboard(user):
 
         #return(recent_songs_html)
         return render_template('dashboard.html', table = recent_songs_html)
+
+
+@app.route('/dashboard/topartists', methods = ['GET', 'POST'])
+def topartists():
+    if request.method == 'GET':
+        artist = Artist()
+        top_artists = artist.most_played_artists()
+
+        #Convert df to html
+        top_artists_html = top_artists.to_html(justify = 'left')
+
+        #return(recent_songs_html)
+        return render_template('dashboard.html', table = top_artists_html)
 
 
 if __name__ == '__main__': 
