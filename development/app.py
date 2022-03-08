@@ -72,13 +72,13 @@ def callback():
         #Verify that user is logged in session
         if 'username' in session:
             username = session['username']
-            return redirect(url_for('dashboard', user = username))
+            return redirect(url_for('recentsongs'))
         else:
             return redirect(url_for('login'))
 
 
-@app.route('/dashboard/<user>', methods = ['GET', 'POST'])
-def dashboard(user):
+@app.route('/dashboard/recentsongs', methods = ['GET', 'POST'])
+def recentsongs():
     if request.method == 'GET':
         #Get 50 recently played songs for user
         tracks = Tracks(session['access_token'])
@@ -90,7 +90,7 @@ def dashboard(user):
 
         #Upload reproductions to database
         format_reprod = format_time(recent_songs)
-        upload_reproductions(user, format_reprod)
+        upload_reproductions(session['username'], format_reprod)
         
         #Drop song_uri column before displaying in html page
         recent_songs = format_reprod.drop(['song_uri'], axis = 1)
