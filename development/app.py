@@ -1,8 +1,10 @@
+from crypt import methods
 from sqlalchemy import table
 from flask import Flask, render_template, request, redirect, url_for, session
 from users import User
 from tracks import Tracks
 from artists import Artist
+from concerts import Concert
 from authorization import *
 from reproductions import *
 
@@ -107,11 +109,15 @@ def topartists():
         artist = Artist()
         top_artists = artist.top_artists(session['username'])
 
+        #Define top artists key for session
+        session['topartists'] = top_artists['artist'] 
+
         #Convert df to html
         top_artists_html = top_artists.to_html(justify = 'left')
 
         #return(recent_songs_html)
         return render_template('dashboard.html', table = top_artists_html)
+
 
 
 if __name__ == '__main__': 
