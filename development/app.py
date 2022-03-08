@@ -110,14 +110,27 @@ def topartists():
         top_artists = artist.top_artists(session['username'])
 
         #Define top artists key for session
-        session['topartists'] = top_artists['artist'] 
-
+        session['topartists'] = top_artists['artist'].to_list() 
+        print(session['topartists'])
         #Convert df to html
         top_artists_html = top_artists.to_html(justify = 'left')
 
-        #return(recent_songs_html)
         return render_template('dashboard.html', table = top_artists_html)
 
+
+@app.route('/dashboard/concerts', methods = ['GET', 'POST'])
+def concerts():
+    if request.method == 'GET':
+        concert = Concert(session['topartists'])
+        concerts_df = concert.filter_concert_data()
+
+        #Drop the concert id before displaying in webpage
+        concerts_df = concerts_df.drop(['id'], axis = 1)
+
+        #Convert df to html
+        concerts_html = concerts_df.to_html(justify = 'left')
+        
+        return render_template('dashboard.html', table = concerts_html)
 
 
 if __name__ == '__main__': 
