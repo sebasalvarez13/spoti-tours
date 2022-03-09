@@ -97,7 +97,7 @@ def recentsongs():
         #Drop song_uri column before displaying in html page
         recent_songs = format_reprod.drop(['song_uri'], axis = 1)
         #Convert df to html
-        recent_songs_html = recent_songs.to_html(justify = 'left')
+        recent_songs_html = recent_songs.to_html(classes = "table table-dark table-striped", justify = 'left')
 
         #return(recent_songs_html)
         return render_template('dashboard.html', table = recent_songs_html)
@@ -113,7 +113,7 @@ def topartists():
         session['topartists'] = top_artists['artist'].to_list() 
         print(session['topartists'])
         #Convert df to html
-        top_artists_html = top_artists.to_html(justify = 'left')
+        top_artists_html = top_artists.to_html(classes = "table table-dark table-striped", justify = 'left')
 
         return render_template('dashboard.html', table = top_artists_html)
 
@@ -128,7 +128,7 @@ def concerts():
         concerts_df = concerts_df.drop(['id'], axis = 1)
 
         #Convert df to html
-        concerts_html = concerts_df.to_html(justify = 'left')
+        concerts_html = concerts_df.to_html(classes = "table table-dark table-striped", justify = 'left')
         
         return render_template('dashboard.html', table = concerts_html)
 
