@@ -10,7 +10,7 @@ from secrets import spotify_token
 class Tracks():
     def __init__(self, spotify_token):
         self.spotify_token = spotify_token
-        self.df_tracks = self.filter_track_data()
+        self.filter_tracks_df = self.filter_track_data()
 
     def get_tracks(self):
         '''Connects to Spotify API and obtains the recently played songs. Returns the parsed data'''
@@ -33,8 +33,6 @@ class Tracks():
 
     def filter_track_data(self):
         '''Filters API data to obtain song, artist, album and uri'''
-        data = self.get_tracks()
-
         #Declare empty lists to store the track name, artist, album, played_at and uri
         songs_list = []
         artist_list = []
@@ -43,7 +41,9 @@ class Tracks():
         song_uri_list = []
 
         #Iterate through API results and populate lists
-        for track in data['items']:
+        api_data = self.get_tracks()
+
+        for track in api_data['items']:
             songs_list.append(track['track']['name'])
             artist_list.append(track['track']['album']['artists'][0]['name'])
             album_list.append(track['track']['album']['name'])
@@ -104,7 +104,7 @@ class Tracks():
 
     def upload_tracks(self):
         '''Uploads the track data to database. Ignores "played_at" field. Only appends new tracks to DB'''
-        df = self.df_tracks
+        df = self.filter_tracks_df
         #Drops "played_at" column
         df = df.drop(['played_at'], axis = 1)
 
@@ -130,8 +130,3 @@ class Tracks():
             if self.track_exists(song_uri) == False:
                 connection.execute(query, [row['song'], row['artist'], row['album'], song_uri])
 
-
-if __name__ == '__main__':
-    tracks = Tracks(spotify_token)
-    #print(tracks.filter_track_data())
-    tracks.upload_reproductions(username = 'picoletosa')
