@@ -84,7 +84,7 @@ class Tracks():
         return(track_count)
 
 
-    def record_exists(self, song_uri):
+    def track_exists(self, song_uri):
         '''Retunrs true if song already exists in DB. Uses song_uri data to verify existence'''
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
         engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
@@ -95,11 +95,11 @@ class Tracks():
         
         result = connection.execute(query, [song_uri])
 
-        record_occurence = result.fetchall()[0][0]
+        track_exists = result.fetchall()[0][0]
 
-        if record_occurence == 0:
+        if track_exists == 0:
             return False
-        else:
+        elif track_exists == 1:
             return True
 
 
@@ -128,7 +128,7 @@ class Tracks():
         for index, row in df.iterrows():
             song_uri = row['song_uri']
             
-            if self.record_exists(song_uri) == False:
+            if self.track_exists(song_uri) == False:
                 connection.execute(query, [row['song'], row['artist'], row['album'], song_uri])
 
 
