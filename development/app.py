@@ -40,11 +40,9 @@ def login():
         password = request.form['password']
 
         user = User()
-        #Define boolean login to verify username and password
-        login = user.login_user(username, password)
-
+        
         #If username and password match, create a session and redirect user Spotify Authorization page
-        if  login is True:
+        if  user.user_exists(username, password):
             #Set up session data. Session stores data as a dictionary
             session['username'] = username
             session['password'] = password
