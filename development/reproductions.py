@@ -51,9 +51,11 @@ def upload_reproductions(username, df_tracks):
             result = connection.execute(query, [song_id, user_id, played_at])
 
 
-def format_time(df_tracks):
-    '''Change format for played_at so it can be inserted into mysql database. Retunr df with correct datetime format'''
-    df_tracks = df_tracks
+def reproductions_time_format(df_tracks):
+    '''Changes format for 'played_at' so it can be inserted into mysql database and converts time from UTC to local time.'''
+    '''Returns df with correct datetime format'''
+
+    #Declare list to store times in correct sql time format
     fixed_times = []
 
     for time in df_tracks['played_at']:
@@ -68,6 +70,7 @@ def format_time(df_tracks):
 
         #Convert time object to string in correct sql datetime format
         sql_time_str = local_time_obj.strftime('%Y-%m-%d %H:%M:%S')
+
         #Append fixed times to list
         fixed_times.append(sql_time_str)
 
@@ -79,11 +82,4 @@ def format_time(df_tracks):
     return df_tracks
 
 
-if __name__ == '__main__':
-    tracks = Tracks(spotify_token)
-    df_tracks = tracks.df_tracks
-    #print(df_tracks)
-    username = 'picoletosa'
-    new_df_tracks = format_time(df_tracks)
-    print(new_df_tracks['played_at'])
-    #upload_reproductions(username, new_df_tracks)
+
