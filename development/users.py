@@ -44,7 +44,8 @@ class User():
             connection.execute(query, [first_name, last_name, email, username, password])
 
 
-    def login_user(self, username, password):
+    def user_exists(self, username, password):
+        '''Verifies if username and password match values from database. Returns True or False'''
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
         engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
 
@@ -60,19 +61,12 @@ class User():
                 where username = %s and password = %s;'''
         result = connection.execute(query, [username, password])
 
-        #Fetch count for username and pasword enterd. If count is 0, user does not exist
+        #Fetch count for username and pasword entered. If count is 0, user does not exist
         user_exists = result.fetchall()[0][2]
-        
-        #Check if user exists and password is correct
+
         if user_exists == 0:
-            print('Username or password incorrect')
             return False
         elif user_exists == 1:
-            print('Here is your Spotify concerts data')
             return True
 
 
-
-if __name__ == "__main__":
-    user = User('Sebas', 'Alvarez', 'sebas@pena.com', 'sebas.xtreme', '1234')
-    user.login_user('picoletosa', '9876')
