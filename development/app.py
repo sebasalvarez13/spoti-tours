@@ -40,7 +40,7 @@ def login():
         password = request.form['password']
 
         user = User()
-        
+
         #If username and password match, create a session and redirect user Spotify Authorization page
         if  user.user_exists(username, password):
             #Set up session data. Session stores data as a dictionary
@@ -66,10 +66,10 @@ def callback():
         code = request.args.get("code")
         #Pass code to Spotify server to obtain access_token
         token_response = get_token(code)
-        #access_token = token_response['access_token']
+        #Store accesss token in Session key
         session['access_token'] = token_response['access_token']
 
-        #Verify that user is logged in session
+        #If username is logged in session, redirect to recent songs in dashboard
         if 'username' in session:
             username = session['username']
             return redirect(url_for('recentsongs'))
