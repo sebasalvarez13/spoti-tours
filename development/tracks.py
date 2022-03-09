@@ -18,18 +18,17 @@ class Tracks():
         limit = 50
 
         query = "https://api.spotify.com/v1/me/player/recently-played?limit={}".format(limit)
-
-        response = requests.get(
-            query,
-            headers = {
+        headers = {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": "Bearer {}".format(self.spotify_token)}
-        )
+                "Authorization": "Bearer {}".format(self.spotify_token)
+        }
 
-        data = response.json()
+        response = requests.get(query, headers = headers)
 
-        return(data)
+        api_data = response.json()
+
+        return(api_data)
 
 
     def filter_track_data(self):
