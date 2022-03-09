@@ -26,9 +26,6 @@ class User():
         
     def register_user(self, first_name, last_name, email, username, password):
         '''Add new user to database if user does not exist'''
-        user_count = self.user_count()
-        print('this is user count: {}'.format(user_count))
-
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
         engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
 
@@ -36,15 +33,16 @@ class User():
         connection = engine.connect()
         
         #Check if this is the first user. If so, id = 1
-        if user_count == 0:
+        if self.user_count() == 0:
             id = 1
             query = '''INSERT INTO users VALUES (%s, %s, %s, %s, %s, %s);'''
             #Execute query
-            result = connection.execute(query, [id, first_name, last_name, email, username, password])
+            connection.execute(query, [id, first_name, last_name, email, username, password])
         else:
             query = '''INSERT INTO users (first_name, last_name, email, username, password) VALUES (%s, %s, %s, %s, %s);'''
             #Execute query
-            result = connection.execute(query, [first_name, last_name, email, username, password])
+            connection.execute(query, [first_name, last_name, email, username, password])
+
 
     def login_user(self, username, password):
         #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
