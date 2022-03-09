@@ -84,20 +84,19 @@ def recentsongs():
         tracks = Tracks(session['access_token'])
         #Return a dataframe with song, artist, album, played_at, song_uri
         recent_songs = tracks.filter_track_data()
-
         #Upload tracks to database
         tracks.upload_tracks()
 
+        #Fix time format and timezone for recent_songs dataframe
+        reproductions_fixed_time = reproductions_time_format(recent_songs)
         #Upload reproductions to database
-        format_reprod = format_time(recent_songs)
-        upload_reproductions(session['username'], format_reprod)
+        upload_reproductions(session['username'], reproductions_fixed_time)
         
         #Drop song_uri column before displaying in html page
-        recent_songs = format_reprod.drop(['song_uri'], axis = 1)
+        recent_songs_display = reproductions_fixed_time.drop(['song_uri'], axis = 1)
         #Convert df to html
-        recent_songs_html = recent_songs.to_html(classes = "table table-dark table-striped", justify = 'left')
+        recent_songs_html = recent_songs_display.to_html(classes = "table table-dark table-striped", justify = 'left')
 
-        #return(recent_songs_html)
         return render_template('dashboard.html', table = recent_songs_html)
 
 
