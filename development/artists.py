@@ -1,31 +1,23 @@
 import pandas
-import sqlalchemy
 
+from database import connection
 
 class Artist():
     def __init__(self):
-        pass
+        self.connection = connection
 
     def top_artists(self, username):
         '''Returns the 5 most played artist per user'''
-        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-        
-        #Create sql connection
-        connection = engine.connect()
-
         #Open sql script. Script limit sets to 5
         with open('../sql_queries/most_played_artists.sql', 'r') as sql_file:
             sql_string = sql_file.read()
 
         #Get user_id from users table
-        query2 = '''SELECT id FROM users 
-                    WHERE username = %s'''
-        result2 = connection.execute(query2, [username])
+        query2 = '''SELECT id FROM users WHERE username = %s'''
+        result2 = self.connection.execute(query2, [username])
         user_id = result2.fetchall()[0][0]
-
         #Execute query
-        result = connection.execute(sql_string, [user_id])
+        result = self.connection.execute(sql_string, [user_id])
 
         #Fetch artist names
         artists = result.fetchall()
@@ -46,13 +38,5 @@ class Artist():
 
         return(df)
 
-if __name__ == '__main__':
-    artist = Artist()
-    top_artists_df = artist.top_artists('picoletosa')
 
-    session = {}
-    session['topartists'] = top_artists_df['artist']
-
-    for artist in session['topartists']:
-        print(artist)
     
