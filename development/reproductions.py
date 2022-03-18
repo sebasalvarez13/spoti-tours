@@ -7,23 +7,17 @@ import datetime
 from datetime import timezone
 from secrets import spotify_token
 from tracks import Tracks
-
+from database import connection
 
 def upload_reproductions(username, df_tracks):
     '''Uploads the song_id, users_id and played_at'''
-    #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-    engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-    #Create sql connection 
-    connection = engine.connect()
-
     #Compare song_uri to data in 'tracks' table and get song_id
     for index, row in df_tracks.iterrows():
         song_uri = row['song_uri']
         played_at = row['played_at']
         
         #Select query. Pass df['song_uri'] as parameter %s
-        query = '''SELECT id FROM tracks 
-                    WHERE song_uri = %s'''
+        query = '''SELECT id FROM tracks WHERE song_uri = %s'''
         result = connection.execute(query, [song_uri])
 
         #Store song_id. If id is null assign 0
@@ -33,8 +27,7 @@ def upload_reproductions(username, df_tracks):
             song_id = 0
         
         #Get user_id from users table
-        query2 = '''SELECT id FROM users 
-                    WHERE username = %s'''
+        query2 = '''SELECT id FROM users WHERE username = %s'''
         result2 = connection.execute(query2, [username])
         user_id = result2.fetchall()[0][0]
 
@@ -54,7 +47,6 @@ def upload_reproductions(username, df_tracks):
 def reproductions_time_format(df_tracks):
     '''Changes format for 'played_at' so it can be inserted into mysql database and converts time from UTC to local time.'''
     '''Returns df with correct datetime format'''
-
     #Declare list to store times in correct sql time format
     fixed_times = []
 
