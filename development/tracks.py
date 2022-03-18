@@ -5,12 +5,13 @@ import sqlalchemy
 import pymysql
 
 from secrets import spotify_token
-
+from database import connection
 
 class Tracks():
     def __init__(self, spotify_token):
         self.spotify_token = spotify_token
         self.filter_tracks_df = self.filter_track_data()
+        self.connection = connection
 
     def get_tracks(self):
         '''Connects to Spotify API and obtains the recently played songs. Returns the parsed data'''
@@ -66,16 +67,10 @@ class Tracks():
 
 
     def tracks_count(self):
-        '''Retunrs the number of records in the tracks table'''
-        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-    
-        query = '''SELECT count(*) FROM tracks;'''
-
-        #Create sql connection
-        connection = engine.connect()
+        '''Retunrs the number of records in the tracks table'''    
         #Execute query
-        result = connection.execute(query)
+        query = '''SELECT count(*) FROM tracks;'''
+        result = self.connection.execute(query)
 
         #Fetch count value
         track_count = result.fetchall()[0][0]
@@ -85,15 +80,8 @@ class Tracks():
 
     def track_exists(self, song_uri):
         '''Retunrs true if song already exists in DB. Uses song_uri data to verify existence'''
-        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-        #Create sql connection 
-        connection = engine.connect()
-
         query = """SELECT count(*) FROM tracks WHERE song_uri = %s"""
-        
-        result = connection.execute(query, [song_uri])
-
+        result = self.connection.execute(query, [song_uri])
         track_exists = result.fetchall()[0][0]
 
         if track_exists == 0:
@@ -115,18 +103,13 @@ class Tracks():
         last_id = self.tracks_count()
         df.insert(loc = 0, column = 'id', value = range((last_id+1), (last_id+len(df)+1))) 
 
-        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-        #Create sql connection 
-        connection = engine.connect()
-
         #Insert query
         query = """INSERT INTO tracks (song, artist, album, song_uri)
                 VALUES (%s, %s, %s, %s)"""
 
         for index, row in df.iterrows():
             song_uri = row['song_uri']
-            
             if self.track_exists(song_uri) == False:
-                connection.execute(query, [row['song'], row['artist'], row['album'], song_uri])
+                self.connection.execute(query, [row['song'], row['artist'], row['album'], song_uri])
+
 
