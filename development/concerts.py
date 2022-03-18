@@ -4,11 +4,13 @@ import json
 import sqlalchemy
 
 from secrets import ticketmaster_key
+from database import connection
 
 class Concert():
     def __init__(self, artist_list):
         self.artists_list = artist_list
         self.concerts_df = self.filter_concert_data()
+        self.connection = connection
 
     def get_concerts(self):
         '''Connect to ticketmaster API and obtain concerts based on most played artists'''
@@ -45,7 +47,6 @@ class Concert():
     def filter_concert_data(self):
         '''Filters API data to obtain event name, id, url, date and location'''
         total_concerts_list = self.get_concerts()
-
         #Declare empty lists to store the event name, id, url, date and location
         name_list = []
         id_list = []
@@ -73,27 +74,15 @@ class Concert():
             'state': state_list,
             'url': url_list
         }
-
         #Create a dataframe using the concert dictionary
         df = pandas.DataFrame(concert_dict, columns = concert_dict.keys())
 
         return(df)
 
+
     def upload_concerts(self):
         '''Uploads the concert data to database. Only appends new tracks to DB'''
-        #syntax: engine = create_engine("mysql://USER:PASSWORD@HOST/DATABASE")
-        engine = sqlalchemy.create_engine("mysql+pymysql://root:Jams2009Charlie2014!@localhost/spoti-tours")
-        #Create sql connection 
-        connection = engine.connect()
-
         #Insert query
-        self.concerts_df.to_sql('concerts', con = connection, if_exists = 'append', index = False)
+        self.concerts_df.to_sql('concerts', con = self.connection, if_exists = 'append', index = False)
 
-
-if __name__ == '__main__':
-    artist_list = ['Bizarrap', 'Rauw Alejandro', 'Tiago PZK', 'Marc Seguí', 'Bad Bunny']
-    concert = Concert(artist_list)
-    filtered_concerts = concert.filter_concert_data()
-    print(filtered_concerts)
-    #concert.upload_concerts()
     
