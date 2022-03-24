@@ -1,6 +1,6 @@
 from crypt import methods
 from sqlalchemy import table
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from users import User
 from tracks import Tracks
 from artists import Artist
@@ -53,7 +53,8 @@ def login():
 
             return redirect(url)
         else:
-            #If username or password is incorrect, redirect to login page and display "Username/password incorrect"
+            #If username or password is incorrect, redirect to login page and flash message
+            flash('Incorrect user or password. Try again!')
             return redirect(url_for('login'))
     else:
         return render_template('login.html', action = 'login')
