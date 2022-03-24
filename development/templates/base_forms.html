@@ -48,6 +48,9 @@
             {% elif action == 'login' %} 
                 <h1>Spoti Tours Login</h1>
                 <br>
+                {% block content %}
+                {% endblock %}
+                
                 <form action="/login" autocomplete="on" method="POST" enctype="multipart/form-data">
                     <div class="mb-3">
                     <label for="UserName" class="form-label">{% block login1 %}{% endblock %}</label>
