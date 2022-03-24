@@ -1,7 +1,20 @@
 {% extends 'base_forms.html' %}
+
 <!-- Title: Register or Login -->
 {% block title %}Login{% endblock %}
 
+<!--Flash message-->
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+{% endblock %}
 <!-- New user registration form -->
 {% block login1 %} Username {% endblock %}
 {% block login2 %} Password {% endblock %}
