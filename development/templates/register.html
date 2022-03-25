@@ -2,12 +2,54 @@
 <!-- Title: Register or Login -->
 {% block title %}Register{% endblock %}
 
-<!-- New user registration form -->
-{% block register1 %} First Name {% endblock %}
-{% block register2 %} Last Name {% endblock %}
-{% block register3 %} Email {% endblock %}
-{% block register4 %} Username {% endblock %}
-{% block register5 %} Password {% endblock %}
+{% block head %}
+    <h1>Spoti Concerts Registration</h1>
+{% endblock %}
+
+{% block content %}
+    <!--Flash message-->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <!-- New user registration form -->
+    <form action="/register" autocomplete="on" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+        <label for="FirstName" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="FirstName" name="first_name">
+        <!--div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div-->
+        </div>
+        <div class="mb-3">
+        <label for="LastName" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="LastName" name="last_name">
+        </div>
+        <div class="mb-3">
+        <label for="Email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="Email" name="email">
+        </div>
+        </div>
+        <div class="mb-3">
+        <label for="UserName" class="form-label">Username</label>
+        <input type="text" class="form-control" id="UserName" name="username">
+        </div>
+        <div class="mb-3">
+        <label for="Password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="Password" name="password">
+        </div>
+        <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="exampleCheck1">
+        <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+{% endblock %}
+
+
 
 
 
