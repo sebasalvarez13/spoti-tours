@@ -30,7 +30,7 @@ def register():
 
         return redirect(url_for('home'))
     else:
-        return render_template('register.html', action = 'register')
+        return render_template('register.html')
 
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -54,10 +54,10 @@ def login():
             return redirect(url)
         else:
             #If username or password is incorrect, redirect to login page and flash message
-            flash('Incorrect user or password. Try again!')
+            flash('Incorrect username or password. Try again!')
             return redirect(url_for('login'))
     else:
-        return render_template('login.html', action = 'login')
+        return render_template('login.html')
 
 
 @app.route('/callback', methods = ['GET', 'POST'])
