@@ -7,10 +7,11 @@ from artists import Artist
 from concerts import Concert
 from authorization import *
 from reproductions import *
+from secrets import session_secret_key
 
 
 app = Flask(__name__)
-app.secret_key = 'secretkey'
+app.secret_key = session_secret_key
 
 @app.route('/')
 def home():
