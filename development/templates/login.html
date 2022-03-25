@@ -3,8 +3,12 @@
 <!-- Title: Register or Login -->
 {% block title %}Login{% endblock %}
 
-<!--Flash message-->
+{% block head %}
+    <h1>Spoti Concerts Login</h1>
+{% endblock %}
+
 {% block content %}
+    <!--Flash message-->
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <ul class=flashes>
@@ -14,8 +18,20 @@
             </ul>
         {% endif %}
     {% endwith %}
+
+    <!-- Existent user login form -->
+    <form action="/login" autocomplete="on" method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+        <label for="UserName" class="form-label">Username</label>
+        <input type="text" class="form-control" id="UserName" name="username">
+        </div>
+        <div class="mb-3">
+        <label for="Password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="Password" name="password">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
 {% endblock %}
-<!-- New user registration form -->
-{% block login1 %} Username {% endblock %}
-{% block login2 %} Password {% endblock %}
+
+
 
