@@ -34,14 +34,10 @@ class User():
 
     def user_exists(self, username, password):
         '''Verifies if username and password match values from database. Returns True or False'''
-        #Query to get verify username, password and count. user_exist = 0 or 1
-        query = '''SELECT 
-            username, 
-            password, 
-            count(*) as user_exists
-            from users
-                where username = %s and password = %s;'''
-        result = self.connection.execute(query, [username, password])
+        with open('../sql_queries/verify_user.sql', 'r') as sql_file:
+            sql_string = sql_file.read()
+
+        result = self.connection.execute(sql_string, [username, password])
 
         #Fetch count for username and pasword entered. If count is 0, user does not exist
         user_exists = result.fetchall()[0][2]
